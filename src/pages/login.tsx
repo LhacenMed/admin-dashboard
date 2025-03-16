@@ -4,7 +4,14 @@ import DefaultLayout from "@/layouts/default";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "../../FirebaseConfig";
 import { useNavigate } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { addAccountToLocalStorage } from "@/utils/localAccounts";
 
 export default function LoginPage() {
@@ -28,26 +35,35 @@ export default function LoginPage() {
       );
       console.log("Login successful, user:", userCredential.user.uid);
 
-      // Get company data
-      const companyDoc = await getDoc(
-        doc(db, "companies", userCredential.user.uid)
+      // Find admin document by firebaseUid
+      const adminsRef = collection(db, "admins");
+      const q = query(
+        adminsRef,
+        where("firebaseUid", "==", userCredential.user.uid)
       );
-      if (companyDoc.exists()) {
-        const companyData = companyDoc.data();
-        console.log("Company data fetched:", companyData);
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const adminDoc = querySnapshot.docs[0];
+        const adminData = adminDoc.data();
+        console.log("Admin data fetched:", adminData);
 
         // Save to local storage
         const accountData = {
-          id: userCredential.user.uid,
-          name: companyData.name,
-          email: companyData.email,
-          logo: companyData.logo,
+          id: adminDoc.id, // This will be in the format admin_XXXX
+          name: adminData.name,
+          email: adminData.email,
+          logo: {
+            publicId: adminData.logo?.publicId || "",
+            url: adminData.logo?.url || "",
+            uploadedAt: adminData.createdAt.toDate().toISOString(),
+          },
         };
         console.log("Saving account to local storage:", accountData);
         const saved = addAccountToLocalStorage(accountData);
         console.log("Save to local storage result:", saved);
       } else {
-        console.log("No company data found for user:", userCredential.user.uid);
+        throw new Error("No admin account found for this user");
       }
 
       setIsLoading(false);
@@ -82,8 +98,8 @@ export default function LoginPage() {
       <div className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
         <Card className="w-full max-w-md p-6">
           <CardHeader className="flex flex-col gap-2 items-center">
-            <h1 className="text-2xl font-bold">Welcome Back</h1>
-            <p className="text-default-500">Sign in to continue</p>
+            <h1 className="text-2xl font-bold">Admin Login</h1>
+            <p className="text-default-500">Sign in to your admin account</p>
           </CardHeader>
           <CardBody>
             <form onSubmit={handleLogin} className="flex flex-col gap-4">

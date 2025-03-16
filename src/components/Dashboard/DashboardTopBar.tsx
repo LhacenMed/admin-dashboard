@@ -15,44 +15,14 @@ import { FiSearch, FiBell } from "react-icons/fi";
 import { MoonFilledIcon, SunFilledIcon } from "@/components/icons";
 import { useTheme } from "@heroui/use-theme";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../../FirebaseConfig";
 import { auth } from "../../../FirebaseConfig";
+import { useAdminData } from "@/hooks/useAdminData";
 
 interface DashboardTopBarProps {
   searchPlaceholder?: string;
   showSearch?: boolean;
   rightContent?: React.ReactNode;
 }
-
-interface CompanyData {
-  name: string;
-  email: string;
-  logo: {
-    publicId: string;
-    url: string;
-    uploadedAt: string;
-  };
-}
-
-const useCompanyData = (companyId: string | null) => {
-  return useQuery<CompanyData | null>({
-    queryKey: ["companyData", companyId],
-    queryFn: async () => {
-      if (!companyId) return null;
-      const docRef = doc(db, "transportation_companies", companyId);
-      const docSnap = await getDoc(docRef);
-      if (!docSnap.exists()) return null;
-      return {
-        name: docSnap.data().name,
-        email: docSnap.data().email,
-        logo: docSnap.data().logo,
-      };
-    },
-    enabled: !!companyId,
-  });
-};
 
 // Add a custom style for the avatar
 const avatarStyles = {
@@ -68,7 +38,7 @@ export const DashboardTopBar = ({
   const navigate = useNavigate();
   const { theme, setTheme } = useTheme();
   const userId = auth.currentUser?.uid || null;
-  const { data: companyData, isLoading } = useCompanyData(userId);
+  const { data: adminData, isLoading } = useAdminData(userId);
 
   return (
     <div className="sticky top-0 bg-content1 border-b border-divider px-6 py-5">
@@ -98,16 +68,16 @@ export const DashboardTopBar = ({
           {!isLoading && (
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
-                {companyData ? (
+                {adminData ? (
                   <Avatar
                     isBordered
                     as="button"
                     className="transition-transform bg-white"
                     style={avatarStyles}
                     color="warning"
-                    name={companyData.name}
+                    name={adminData.name}
                     size="sm"
-                    src={companyData.logo.url}
+                    src={adminData.logo.url}
                     imgProps={{
                       className: "object-contain",
                     }}
@@ -125,12 +95,12 @@ export const DashboardTopBar = ({
                   />
                 )}
               </DropdownTrigger>
-              {companyData ? (
+              {adminData ? (
                 <DropdownMenu aria-label="Profile Actions" variant="flat">
                   <DropdownItem key="profile" className="h-14 gap-2">
                     <p className="font-semibold">Signed in as</p>
                     <p className="font-semibold text-primary">
-                      {companyData.email}
+                      {adminData.email}
                     </p>
                   </DropdownItem>
                   <DropdownItem key="theme" className="h-14 gap-2">
@@ -152,9 +122,7 @@ export const DashboardTopBar = ({
                       />
                     </div>
                   </DropdownItem>
-                  <DropdownItem key="company_profile">
-                    Company Profile
-                  </DropdownItem>
+                  <DropdownItem key="admin_profile">Admin Profile</DropdownItem>
                   <DropdownItem key="settings">Settings</DropdownItem>
                   <DropdownItem key="help">Help & Support</DropdownItem>
                   <DropdownItem key="logout" color="danger">

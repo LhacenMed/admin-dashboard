@@ -4,7 +4,6 @@ import SignUpPage from "./pages/signup";
 import DashboardPage from "./pages/dashboard";
 import IndexPage from "./pages/index";
 import DocsPage from "./pages/docs";
-import Home from "./pages/page";
 import PrivateRoute from "./components/PrivateRoute";
 import TeamPage from "./pages/team";
 import TripsPage from "./pages/trips";
@@ -12,7 +11,6 @@ import IntegrationsPage from "./pages/integrations";
 import FinancePage from "./pages/finance";
 import { SeatManagement } from "./components/Trips/SeatManagement";
 import { AppLayout } from "./layouts/AppLayout";
-import { StatusProtectedRoute } from "@/components/ProtectedRoute/StatusProtectedRoute";
 
 export const router = createBrowserRouter([
   {
@@ -26,10 +24,6 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUpPage />,
-  },
-  {
-    path: "/page",
-    element: <Home />,
   },
   {
     element: (
@@ -65,13 +59,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/finance",
-        element: (
-          <PrivateRoute>
-            <StatusProtectedRoute>
-              <FinancePage />
-            </StatusProtectedRoute>
-          </PrivateRoute>
-        ),
+        element: <FinancePage />,
       },
       {
         path: "/docs",

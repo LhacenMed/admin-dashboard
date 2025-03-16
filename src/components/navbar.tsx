@@ -19,7 +19,7 @@ import clsx from "clsx";
 import { auth } from "../../FirebaseConfig";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
-import { useCompanyData } from "@/hooks/useCompanyData";
+import { useAdminData } from "@/hooks/useAdminData";
 
 import { siteConfig } from "@/config/site";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -35,7 +35,7 @@ const avatarStyles = {
 
 export const Navbar = () => {
   const navigate = useNavigate();
-  const { data: companyData, isLoading } = useCompanyData(
+  const { data: adminData, isLoading } = useAdminData(
     auth.currentUser?.uid || null
   );
 
@@ -118,7 +118,7 @@ export const Navbar = () => {
           <ThemeSwitch />
         </NavbarItem>
         <NavbarItem className="hidden lg:flex">{searchInput}</NavbarItem>
-        {!companyData && (
+        {!adminData && (
           <NavbarItem className="hidden md:flex">
             <Button
               as={Link}
@@ -169,16 +169,16 @@ export const Navbar = () => {
         {!isLoading && (
           <Dropdown placement="bottom-end">
             <DropdownTrigger>
-              {companyData ? (
+              {adminData ? (
                 <Avatar
                   isBordered
                   as="button"
                   className="transition-transform bg-white"
                   style={avatarStyles}
                   color="warning"
-                  name={companyData.name}
+                  name={adminData.name}
                   size="sm"
-                  src={companyData.logo.url}
+                  src={adminData.logo.url}
                   imgProps={{
                     className: "object-contain",
                   }}
@@ -196,17 +196,15 @@ export const Navbar = () => {
                 />
               )}
             </DropdownTrigger>
-            {companyData ? (
+            {adminData ? (
               <DropdownMenu aria-label="Profile Actions" variant="flat">
                 <DropdownItem key="profile" className="h-14 gap-2">
                   <p className="font-semibold">Signed in as</p>
                   <p className="font-semibold text-primary">
-                    {companyData.email}
+                    {adminData.email}
                   </p>
                 </DropdownItem>
-                <DropdownItem key="company_profile">
-                  Company Profile
-                </DropdownItem>
+                <DropdownItem key="admin_profile">Admin Profile</DropdownItem>
                 <DropdownItem key="settings">Settings</DropdownItem>
                 <DropdownItem key="help">Help & Support</DropdownItem>
                 <DropdownItem

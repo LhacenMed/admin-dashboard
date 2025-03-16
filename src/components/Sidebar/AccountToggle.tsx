@@ -7,7 +7,7 @@ import {
   getLocalAccounts,
   removeAccountFromLocalStorage,
 } from "@/utils/localAccounts";
-import { useCompanyData } from "@/hooks/useCompanyData";
+import { useAdminData } from "@/hooks/useAdminData";
 import { Spinner } from "@heroui/react";
 import { StoredAccount } from "@/types/company";
 
@@ -16,7 +16,7 @@ export const AccountToggle = () => {
   const [localAccounts, setLocalAccounts] = useState<StoredAccount[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const { data: companyData, isLoading } = useCompanyData(
+  const { data: adminData, isLoading } = useAdminData(
     auth.currentUser?.uid || null
   );
 
@@ -44,7 +44,7 @@ export const AccountToggle = () => {
 
       // Filter out current account and sort by last login
       const filteredAccounts = accounts
-        .filter((account) => account.id !== companyData?.id)
+        .filter((account) => account.id !== adminData?.id)
         .sort(
           (a, b) =>
             new Date(b.lastLoginAt).getTime() -
@@ -54,7 +54,7 @@ export const AccountToggle = () => {
       console.log("Filtered accounts:", filteredAccounts);
       setLocalAccounts(filteredAccounts);
     }
-  }, [isExpanded, companyData?.id]);
+  }, [isExpanded, adminData?.id]);
 
   const handleLogout = async () => {
     try {
@@ -102,7 +102,7 @@ export const AccountToggle = () => {
     );
   }
 
-  if (!companyData) {
+  if (!adminData) {
     return null;
   }
 
@@ -114,16 +114,16 @@ export const AccountToggle = () => {
           className="flex p-0.5 hover:bg-content2 rounded transition-colors relative gap-2 w-full items-center"
         >
           <img
-            src={companyData.logo.url}
-            alt={`${companyData.name} logo`}
+            src={adminData.logo.url}
+            alt={`${adminData.name} logo`}
             className="size-8 rounded shrink-0 bg-white shadow-small object-contain"
           />
           <div className="text-start">
             <span className="text-sm font-bold block text-foreground">
-              {companyData.name}
+              {adminData.name}
             </span>
             <span className="text-xs block text-default-500">
-              {companyData.email}
+              {adminData.email}
             </span>
           </div>
 
