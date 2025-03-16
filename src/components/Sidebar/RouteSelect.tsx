@@ -11,7 +11,7 @@ import {
 
 const routes = [
   { path: "/dashboard", Icon: FiHome, title: "Dashboard" },
-  { path: "/team", Icon: FiUsers, title: "Team" },
+  { path: "/companies", Icon: FiUsers, title: "Companies" },
   { path: "/trips", Icon: FiTruck, title: "Trips" },
   { path: "/integrations", Icon: FiLink, title: "Integrations" },
   { path: "/finance", Icon: FiDollarSign, title: "Finance" },

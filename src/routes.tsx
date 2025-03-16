@@ -5,7 +5,7 @@ import DashboardPage from "./pages/dashboard";
 import IndexPage from "./pages/index";
 import DocsPage from "./pages/docs";
 import PrivateRoute from "./components/PrivateRoute";
-import TeamPage from "./pages/team";
+import CompaniesPage from "./pages/companies";
 import TripsPage from "./pages/trips";
 import IntegrationsPage from "./pages/integrations";
 import FinancePage from "./pages/finance";
@@ -37,8 +37,8 @@ export const router = createBrowserRouter([
         element: <DashboardPage />,
       },
       {
-        path: "/team",
-        element: <TeamPage />,
+        path: "/companies",
+        element: <CompaniesPage />,
       },
       {
         path: "/trips",
